@@ -32,6 +32,15 @@
 - (void)loadView
 {
     [super loadView];
+
+    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0,
+                                                               0,
+                                                               self.view.frame.size.width,
+                                                               self.view.frame.size.height)];
+    self.mapView.showsUserLocation = YES;
+    //    mapView_.delegate = self;
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:self.mapView];
 }
 
 - (void)viewDidLoad
@@ -39,15 +48,6 @@
     [super viewDidLoad];
 
     //[self.navigationController setToolbarHidden:NO animated:NO];
-
-    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0,
-                                                               0,
-                                                               self.view.frame.size.width,
-                                                               self.view.frame.size.height)];
-    self.mapView.showsUserLocation = YES;
-//    mapView_.delegate = self;
-    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self.view addSubview:self.mapView];
 
     UIBarButtonItem *cancel =
     [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
@@ -67,7 +67,6 @@
                                                   action:@selector(didTapCurrentButton)];
 
     [self setToolbarItems:@[currentButton] animated:YES];
-
 }
 
 - (void)didReceiveMemoryWarning
