@@ -92,8 +92,14 @@
 
 - (void)didTapDoneButton
 {
-    if (self.success) {
-        self.success(self.mapView.centerCoordinate);
+    if (CLLocationCoordinate2DIsValid(self.mapView.centerCoordinate)) {
+        if (self.success) {
+            self.success(self.mapView.centerCoordinate);
+        }
+    } else {
+        if (self.failure) {
+            self.failure(nil);
+        }
     }
 
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -133,7 +139,8 @@
 
 #pragma mark - CLLocationManager delegate
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+- (void)locationManager:(CLLocationManager *)manager
+didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     if (status == kCLAuthorizationStatusNotDetermined) {
         if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
@@ -142,7 +149,9 @@
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
 {
     [self.locationManager stopUpdatingLocation];
 
