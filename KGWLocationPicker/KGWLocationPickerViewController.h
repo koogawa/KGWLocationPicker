@@ -7,16 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 typedef void (^KGWLocationPickerSuccessReturnBlock)(CLLocationCoordinate2D coordinate);
 typedef void (^KGWLocationPickerFauilreBlock)(NSError* error);
 
-@protocol ConfigTableViewControllerDelegate <NSObject>
-- (void)configClosed;
-@end
-
-@interface KGWLocationPickerViewController : UIViewController <MKMapViewDelegate>
+@interface KGWLocationPickerViewController : UIViewController
 
 - (id)initWithSucess:(KGWLocationPickerSuccessReturnBlock)sucess onFailure:(KGWLocationPickerFauilreBlock)failure;
 

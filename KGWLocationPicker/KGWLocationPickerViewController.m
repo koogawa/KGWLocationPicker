@@ -7,12 +7,15 @@
 //
 
 #import "KGWLocationPickerViewController.h"
+#import <MapKit/MapKit.h>
 
-@interface KGWLocationPickerViewController ()
+@interface KGWLocationPickerViewController () <MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic, strong) MKMapView *mapView;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, copy) KGWLocationPickerSuccessReturnBlock success;
 @property (nonatomic, copy) KGWLocationPickerFauilreBlock failure;
+@property (nonatomic, assign) BOOL isInitialized;
 
 @end
 
@@ -33,12 +36,9 @@
 {
     [super loadView];
 
-    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0,
-                                                               0,
-                                                               self.view.frame.size.width,
-                                                               self.view.frame.size.height)];
+    self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.mapView.showsUserLocation = YES;
-    //    mapView_.delegate = self;
+//    self.mapView_.delegate = self;
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.mapView];
 }
@@ -67,6 +67,10 @@
                                                   action:@selector(didTapCurrentButton)];
 
     [self setToolbarItems:@[currentButton] animated:YES];
+
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager startUpdatingLocation];
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,6 +78,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 
 #pragma mark - Private method
 
@@ -93,6 +98,34 @@
 
 - (void)didTapCurrentButton
 {
+}
+
+
+#pragma mark - CLLocationManager delegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (status == kCLAuthorizationStatusNotDetermined) {
+        if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [self.locationManager requestWhenInUseAuthorization];
+        }
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    [self.locationManager stopUpdatingLocation];
+
+    if (!self.isInitialized) {
+        MKCoordinateRegion region;
+        region.span.latitudeDelta = 0.005;
+        region.span.longitudeDelta = 0.005;
+        region.center.latitude = newLocation.coordinate.latitude;
+        region.center.longitude = newLocation.coordinate.longitude;
+        [self.mapView setRegion:region animated:YES];
+
+        self.isInitialized = YES;
+    }
 }
 
 @end
