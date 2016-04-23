@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) MKMapView *mapView;
 @property (nonatomic, strong) MKPointAnnotation *pointAnnotation;
+@property (nonatomic, strong) UIBarButtonItem *currentButton;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, copy) KGWLocationPickerSuccessReturnBlock success;
 @property (nonatomic, copy) KGWLocationPickerFauilreBlock failure;
@@ -48,8 +49,6 @@
 {
     [super viewDidLoad];
 
-    //[self.navigationController setToolbarHidden:NO animated:NO];
-
     UIBarButtonItem *cancel =
     [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                   target:self
@@ -62,12 +61,15 @@
                                                   action:@selector(didTapDoneButton)];
     self.navigationItem.rightBarButtonItem = doneButton;
 
-    UIBarButtonItem *currentButton =
+    self.currentButton =
     [[UIBarButtonItem alloc] initWithBarButtonSystemItem:100
                                                   target:self
                                                   action:@selector(didTapCurrentButton)];
+    self.currentButton.enabled = NO;
 
-    [self setToolbarItems:@[currentButton] animated:YES];
+    [self setToolbarItems:@[self.currentButton] animated:NO];
+
+    [self.navigationController setToolbarHidden:NO animated:NO];
 
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
@@ -99,6 +101,9 @@
 
 - (void)didTapCurrentButton
 {
+    [self.mapView setCenterCoordinate:self.mapView.userLocation.coordinate animated:YES];
+
+    self.currentButton.enabled = NO;
 }
 
 
@@ -110,7 +115,7 @@
         return;
     }
 
-//    currentButton_.enabled = YES;
+    self.currentButton.enabled = YES;
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
