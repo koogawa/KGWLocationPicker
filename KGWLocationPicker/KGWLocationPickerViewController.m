@@ -12,6 +12,7 @@
 @interface KGWLocationPickerViewController () <MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic, strong) MKMapView *mapView;
+@property (nonatomic, strong) MKPointAnnotation *pointAnnotation;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, copy) KGWLocationPickerSuccessReturnBlock success;
 @property (nonatomic, copy) KGWLocationPickerFauilreBlock failure;
@@ -38,7 +39,7 @@
 
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.mapView.showsUserLocation = YES;
-//    self.mapView_.delegate = self;
+    self.mapView.delegate = self;
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:self.mapView];
 }
@@ -101,6 +102,30 @@
 }
 
 
+#pragma mark - MapView delegate
+
+- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated
+{
+    if (!self.isInitialized) {
+        return;
+    }
+
+//    currentButton_.enabled = YES;
+}
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    if (!self.isInitialized) {
+        return;
+    }
+
+    CLLocationCoordinate2D coordinate;
+    coordinate.latitude = mapView.region.center.latitude;
+    coordinate.longitude = mapView.region.center.longitude;
+    [self.pointAnnotation setCoordinate:mapView.region.center];
+}
+
+
 #pragma mark - CLLocationManager delegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
@@ -123,6 +148,10 @@
         region.center.latitude = newLocation.coordinate.latitude;
         region.center.longitude = newLocation.coordinate.longitude;
         [self.mapView setRegion:region animated:YES];
+
+        self.pointAnnotation = [[MKPointAnnotation alloc] init];
+        self.pointAnnotation.coordinate = newLocation.coordinate;
+        [self.mapView addAnnotation:self.pointAnnotation];
 
         self.isInitialized = YES;
     }
