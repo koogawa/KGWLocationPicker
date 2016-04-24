@@ -6,6 +6,12 @@ Simple location picker with a built in maps. The selected item can be returned t
 
 ## Usage
 
+1. Link `CoreLocation.framework` and `MapKit.framework` to your project.
+2. Fill in `NSLocationWhenInUseUsageDescription` in your Info.plist if you use KGWLocationPicker on iOS 8 and above.
+3. Include the `KGWLocationPickerViewController.h` header
+4. Initialise the KGWLocationPicker
+5. Push the controller
+
 ```obj-c
 KGWLocationPickerViewController *viewController =
 [[KGWLocationPickerViewController alloc] initWithSucess:^(CLLocationCoordinate2D coordinate) {
@@ -16,11 +22,13 @@ KGWLocationPickerViewController *viewController =
 
 ## Installation
 
-1. Link `CoreLocation.framework` and `MapKit.framework` to your project.
-2. Fill in `NSLocationWhenInUseUsageDescription` in your Info.plist if you use KGWLocationPicker on iOS 8 and above.
-2. Include the `KGWLocationPickerViewController.h` header
-3. Initialise the KGWLocationPicker
-4. Push the controller
+KGWLocationPicker is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+
+```ruby
+pod "KGWLocationPicker"
+```
+
 
 ## Requirements
 
